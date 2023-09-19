@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-// use Illuminate\Http\Request;
-// use App\Models\Todo;
-
-use App\Http\Models\Todo\Commons\TodoViewModel;
 use Illuminate\Http\Request;
-use packages\Todolist\Todo\UseCase\Todo\GetInfo\TodoGetInfoCommand;
-use packages\Todolist\Todo\UseCase\Todo\GetInfo\TodoGetInfoServiceInterface;
+use App\Models\Todo;
 
 class TodoController extends Controller
 {
@@ -23,19 +18,6 @@ class TodoController extends Controller
 
         return view('index')->with('todos', $todos);
     }
-
-    public function show(TodoGetInfoServiceInterface $interactor, $name)
-    {
-        dd(123);
-        //
-        $command = new TodoGetInfoCommand($name);
-        $resutl = $interactor->handle($command);
-
-        //TODO: 専用の ViewModel を作成してレスポンスを返す。
-        //$userModel = new TodoShowViewModel("id001", "name001");
-        //return view('user.show', compact('viewModel'));
-    }
-
 
     /**
      * Show the form for creating a new resource.
@@ -79,12 +61,12 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function show($id)
-    // {
-    //     $todo = Todo::find($id);
+    public function show($id)
+    {
+        $todo = Todo::find($id);
 
-    //     return view('show')->with('todo', $todo);
-    // }
+        return view('show')->with('todo', $todo);
+    }
 
     /**
      * Show the form for editing the specified resource.
