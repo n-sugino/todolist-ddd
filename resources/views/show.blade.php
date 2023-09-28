@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    
+@foreach ($todos as $todo)
     <a href="/" class="btn btn-secondary mt-2">Go Back</a>
     <br> <br>
     <div class="badge badge-danger">{{ $todo->due }}</div>
@@ -19,4 +19,6 @@
         </form>
         <a href="/todo/{{ $todo->id }}/edit" class="btn btn-primary mt-2">Edit</a>
     </div>
-@endsection
+    @endforeach
+
+    @endsection

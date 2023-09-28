@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 // use Illuminate\Http\Request;
-// use App\Models\Todo;
+use App\Models\Todo;
 
 use App\Http\Models\Todo\Commons\TodoViewModel;
 use Illuminate\Http\Request;
 use packages\Todolist\Todo\UseCase\Todo\GetInfo\TodoGetInfoCommand;
 use packages\Todolist\Todo\UseCase\Todo\GetInfo\TodoGetInfoServiceInterface;
+use packages\Todolist\Todo\Domain\Todo\TodoRepositoryInterface;
+use packages\Todolist\Todo\Domain\Todo\TodoId;
+use DB;
 
 class TodoController extends Controller
 {
@@ -17,23 +20,20 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function __invoke()
+    public function __invoke(TodoRepositoryInterface $todoRepository)
     {
-        $todos = Todo::orderBy('created_at', 'desc')->get();
+        $todos = $todoRepository->all();
 
         return view('index')->with('todos', $todos);
+
     }
 
-    public function show(TodoGetInfoServiceInterface $interactor, $name)
+    public function show($id, TodoRepositoryInterface $todoRepository)
     {
-        dd(123);
-        //
-        $command = new TodoGetInfoCommand($name);
-        $resutl = $interactor->handle($command);
-
-        //TODO: 専用の ViewModel を作成してレスポンスを返す。
-        //$userModel = new TodoShowViewModel("id001", "name001");
-        //return view('user.show', compact('viewModel'));
+        $todoId = new TodoId($id);
+        $todos = $todoRepository->findById($todoId);
+    
+        return view('show')->with('todos', $todos);
     }
 
 
@@ -53,7 +53,8 @@ class TodoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+
+     public function store(Request $request,TodoRepositoryInterface $todoRepository)
     {
         $this->validate($request,
             [
@@ -61,17 +62,39 @@ class TodoController extends Controller
                 'content' => 'required',
                 'due' => 'required'
             ]
-            
         );
 
-        $todo = new Todo();
-        $todo->title = $request->input('title');
-        $todo->content = $request->input('content');
-        $todo->due = $request->input('due');
-        $todo->save();
+        $providedTitle = $request->input('title');
+        $providedContent = $request->input('content');
+        $providedDue = $request->input('due');
+
+        $maxId = DB::table('todos')->max('id'); 
+        $newId = $maxId + 1;
+
+        $todo = Todo::create(
+            Id::fromPrimitives($newId),
+            Title::fromString($providedTitle),
+            Content::fromString($providedContent),
+            Due::fromString($providedDue),
+            DateTimeValueObject::now()
+        );
+
+        $todoRepository->create($todo);
 
         return redirect('/')->with('success', 'Todo created successfuly!');
     }
+
+    // public function store(UserRegisterServiceInterface $interactor, Request $request)
+    // {
+    //     //
+    //     $params = $request->all();
+    //     $command = new UserRegisterCommand($params['name']);
+    //     $result = $interactor->handle($command);
+
+    //     //TODO: 専用の ViewModel を作成してレスポンスを返す。
+    //     //$userModel = new UserStoreViewModel("id001", "name001");
+    //     //return view('user.store', compact('viewModel'));
+    // }
 
     /**
      * Display the specified resource.
@@ -92,12 +115,16 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        $todo = Todo::find($id);
 
-        return view('edit')->with('todo', $todo);
-    }
+     public function edit($id, TodoRepositoryInterface $todoRepository)
+     {
+
+        $todoId = new TodoId($id);
+        $todos = $todoRepository->findById($todoId);
+    
+        return view('edit')->with('todos', $todos);
+
+     }
 
     /**
      * Update the specified resource in storage.
@@ -106,16 +133,44 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        $todo = Todo::find($id);
-        $todo->title = $request->input('title');
-        $todo->content = $request->input('content');
-        $todo->due = $request->input('due');
-        $todo->save();
 
+     public function update(Request $request,TodoRepositoryInterface $todoRepository, $id)
+     {
+        $todoId = new TodoId($id);
+        $todo = $todoRepository->findById($todoId);
+
+        $providedTitle = $request->input('title');
+        $providedContent = $request->input('content');
+        $providedDue = $request->input('due');
+
+        if (!empty($providedTitle)) {
+            $todo->updateTitle($providedTitle);
+        }
+
+        if (!empty($providedContent)) {
+            $todo->updateContent($providedContent);
+        }
+
+        if (!empty($providedDue)) {
+            $todo->updateDue($providedDue);
+        }
+
+        $todoRepository->update($todo);
+    
         return redirect('/')->with('success', 'Todo edited successfuly!');
-    }
+     }
+
+
+    // public function update(Request $request, $id)
+    // {
+    //     $todo = Todo::find($id);
+    //     $todo->title = $request->input('title');
+    //     $todo->content = $request->input('content');
+    //     $todo->due = $request->input('due');
+    //     $todo->save();
+
+    //     return redirect('/')->with('success', 'Todo edited successfuly!');
+    // }
 
     /**
      * Remove the specified resource from storage.

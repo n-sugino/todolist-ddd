@@ -8,14 +8,14 @@ declare(strict_types=1);
  */
 
 namespace packages\Todolist\Todo\UseCase\Todo\GetInfo;
-
+use packages\Todolist\Todo\Domain\Todo\Todo;
 /**
  * TodoGetInfoCommand class
  */
 class TodoGetInfoCommand
 {
     /** @var string */
-    public $id;
+    public $content;
 
     /**
      * TodoGetInfoCommand construcer.
@@ -23,8 +23,8 @@ class TodoGetInfoCommand
      * @param string $name
      * @param string $mailAddress
      */
-    public function __construct(string $id)
+    public function __construct(string $content)
     {
-        $this->id = $id;
+        $this->content = $content;
     }
 }

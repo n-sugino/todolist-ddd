@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Todo;
+namespace packages\Todolist\Todo\Domain\Todo;
 
 use App\Domain\Todo\Aggregate\Todo;
 use App\Domain\Todo\ValueObject\Id;
@@ -17,4 +17,7 @@ interface TodoRepository
     public function findById(Id $id): Todo;
 
     public function delete(Todo $todo): void;
+
+    public function all(Todo $todo);
+
 }

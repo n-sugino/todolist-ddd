@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace packages\Todolist\Todo\Application\Todo\GetInfo;
 
 use Exception;
-use packages\Todolist\Todo\Domain\Todo\TodoName;
+use packages\Todolist\Todo\Domain\Todo\TodoContent;
+use packages\Todolist\Todo\Domain\Todo\TodoDue;
+use packages\Todolist\Todo\Domain\Todo\TodoTitle;
 use packages\Todolist\Todo\Domain\Todo\TodoRepositoryInterface;
 use packages\Todolist\Todo\UseCase\Todo\GetInfo\TodoData;
 use packages\Todolist\Todo\UseCase\Todo\GetInfo\TodoGetInfoCommand;
@@ -42,8 +44,8 @@ class TodoGetInfoService implements TodoGetInfoServiceInterface
      */
     public function handle(TodoGetInfoCommand $command)
     {
-        $targetName = new TodoName($command->name);
-        $todo = $this->todoRepository->findByName($targetName);
+        $targetContent = new TodoContent($command->content);
+        $todo = $this->todoRepository->findByName($targetContent);
         if (is_null($todo)) {
             return null;
         }

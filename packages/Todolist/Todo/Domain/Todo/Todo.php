@@ -3,22 +3,22 @@
 namespace App\Domain\Todo\Aggregate;
 namespace packages\Todolist\Todo\Domain\Todo;
 
-use App\Domain\Todo\ValueObject\Id;
-use App\Domain\Todo\ValueObject\Title;
-use App\Domain\Todo\ValueObject\Content;
-use App\Domain\Todo\ValueObject\Due;
-use App\Domain\Shared\ValueObject\DateTimeValueObject;
+
+// use App\Domain\Shared\ValueObject\DateTimeValueObject;
 
 final class Todo
 {
-    private function __construct(
-        private Id $id,
-        private Title $title,
-        private Content $content,
-        private Due $due,
-        private DateTimeValueObject $createdAt,
-        private ?DateTimeValueObject $updatedAt,
+    public function __construct(
+        TodoId $id,
+        // TodoTitle $title,
+        // TodoContent $content,
+        // TodoDue $due,
+       
     ) {
+        $this->id = $id;
+        // $this->title = $title;
+        // $this->content = $content;
+        // $this->due = $due;
     }
 
     public static function create(

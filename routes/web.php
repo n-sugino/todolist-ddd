@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TodoController;
+// use App\Http\Controllers\TodoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,5 +18,5 @@ use App\Http\Controllers\TodoController;
 // });
 
 Route::get('/', TodoController::class);
-
-Route::resource('todo', TodoController::class);
+// Route::get('/sample', 'App\Http\Controllers\SampleController@showPage');
+Route::resource('todo', 'TodoController');

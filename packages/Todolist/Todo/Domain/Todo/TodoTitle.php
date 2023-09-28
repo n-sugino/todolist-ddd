@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Domain\Todo\ValueObject;
+namespace packages\Todolist\Todo\Domain\Todo;
 
-use App\Domain\Shared\ValueObject\StringValueObject;
 
-final class TodoTitle extends StringValueObject
+final class TodoTitle 
 {
 }
