@@ -16,16 +16,8 @@ use packages\Todolist\Todo\Domain\Todo\Todo;
 class TodoGetInfoCommand
 {
 
-    // public $id;
-    // public $title;
-    // public $content;
-    // public $due;
-
     public function __construct()
     {
-        // $this->id = $id;
-        // $this->title = $title;
-        // $this->content = $content;
-        // $this->due = $due;
+   
     }
 }

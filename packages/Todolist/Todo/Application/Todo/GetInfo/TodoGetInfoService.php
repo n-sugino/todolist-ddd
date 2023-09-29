@@ -45,12 +45,11 @@ class TodoGetInfoService implements TodoGetInfoServiceInterface
      */
     public function handle(TodoGetInfoCommand $command)
     {
-        // $targetContent = new TodoContent($command->content);
         $todos = $this->todoRepository->allData();
         if (is_null($todos)) {
             return null;
         }
-        // return view('index')->with('todos', $todos);
+        
         return $todos;
     }
 }

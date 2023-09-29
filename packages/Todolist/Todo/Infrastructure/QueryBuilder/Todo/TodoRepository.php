@@ -75,12 +75,6 @@ class TodoRepository implements TodoRepositoryInterface
         return $found;
     }
 
-    /**
-     * Delete todo by Name.
-     *
-     * @param Todo $todo
-     * @return void
-     */
     public function delete(TodoId $todoId)
     {
         $found = DB::table('todos')->where('id', '=', $todoId->getValue())->delete();

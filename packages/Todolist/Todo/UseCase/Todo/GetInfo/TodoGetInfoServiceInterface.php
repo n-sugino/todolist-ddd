@@ -14,11 +14,11 @@ namespace packages\Todolist\Todo\UseCase\Todo\GetInfo;
  */
 interface TodoGetInfoServiceInterface
 {
-    /**
-     * Get Todo Data.
-     *
-     * @param string $userId
-     * @return TodoData|null
-     */
+ /**
+  * Undocumented function
+  *
+  * @param TodoGetInfoCommand $command
+  * @return void
+  */
     public function handle(TodoGetInfoCommand $command);
 }
