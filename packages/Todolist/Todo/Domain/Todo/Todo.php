@@ -1,24 +1,22 @@
 <?php
 
-namespace App\Domain\Todo\Aggregate;
 namespace packages\Todolist\Todo\Domain\Todo;
 
-
-// use App\Domain\Shared\ValueObject\DateTimeValueObject;
+use Illuminate\Support\Facades\DB;
 
 final class Todo
 {
     public function __construct(
         TodoId $id,
-        // TodoTitle $title,
-        // TodoContent $content,
-        // TodoDue $due,
+        TodoTitle $title,
+        TodoContent $content,
+        TodoDue $due,
        
     ) {
         $this->id = $id;
-        // $this->title = $title;
-        // $this->content = $content;
-        // $this->due = $due;
+        $this->title = $title;
+        $this->content = $content;
+        $this->due = $due;
     }
 
     public static function create(
@@ -48,6 +46,17 @@ final class Todo
     {
         return $this->title;
     }
+
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    public function getDue()
+    {
+        return $this->due;
+    }
+
 
     public function id(): Id
     {
@@ -79,30 +88,15 @@ final class Todo
         return $this->updatedAt;
     }
 
-    public function updateTitle(string $title): void
+    public function allData()
     {
-        $this->title = Title::fromString($title);
+        $found = DB::table('todos')->orderBy('created_at', 'desc')->get();
+        if ($found->isEmpty()) {
+            return null;
+        }
+        return $found;
     }
 
-    public function updateContent(string $content): void
-    {
-        $this->content = Content::fromString($content);
-    }
 
-    public function updateDue(string $due): void
-    {
-        $this->due = Due::fromString($due);
-    }
 
-    public function asArray(): array
-    {
-        return [
-            'id' => $this->id()->value(),
-            'title' => $this->title()->value(),
-            'content' => $this->content()->value(),
-            'due' => $this->due()->value(),
-            'created_at' => $this->createdAt()->value(),
-            'updated_at' => $this->updatedAt()?->value(),
-        ];
-    }
 }

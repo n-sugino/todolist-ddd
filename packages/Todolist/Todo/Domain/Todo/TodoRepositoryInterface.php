@@ -17,8 +17,7 @@ interface TodoRepositoryInterface
 {
     public function save(Todo $user);
     public function findById(TodoId $userId);
-    public function findByName(TodoContent $userName);
     public function update(Todo $user);
-    public function delete(Todo $user);
-    public function all();
+    public function delete(TodoId $userId);
+    public function allData();
 }

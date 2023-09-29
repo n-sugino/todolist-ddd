@@ -17,6 +17,7 @@ use packages\Todolist\Todo\Domain\Todo\TodoRepositoryInterface;
 use packages\Todolist\Todo\UseCase\Todo\GetInfo\TodoData;
 use packages\Todolist\Todo\UseCase\Todo\GetInfo\TodoGetInfoCommand;
 use packages\Todolist\Todo\UseCase\Todo\GetInfo\TodoGetInfoServiceInterface;
+use Illuminate\Support\Facades\DB;
 
 /**
  * TodoGetInfoService class
@@ -44,12 +45,12 @@ class TodoGetInfoService implements TodoGetInfoServiceInterface
      */
     public function handle(TodoGetInfoCommand $command)
     {
-        $targetContent = new TodoContent($command->content);
-        $todo = $this->todoRepository->findByName($targetContent);
-        if (is_null($todo)) {
+        // $targetContent = new TodoContent($command->content);
+        $todos = $this->todoRepository->allData();
+        if (is_null($todos)) {
             return null;
         }
-
-        return new TodoData($todo);
+        // return view('index')->with('todos', $todos);
+        return $todos;
     }
 }

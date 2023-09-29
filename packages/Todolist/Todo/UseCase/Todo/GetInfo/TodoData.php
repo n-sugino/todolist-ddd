@@ -31,7 +31,9 @@ class TodoData
      */
     public function __construct(Todo $source)
     {
-        // $this->id = $source->getId()->getValue();
-        // $this->name = $source->getName()->getValue();
+        $this->id = $source->getId()->getValue();
+        $this->title = $source->getTitle()->getValue();
+        $this->content = $source->getContent()->getValue();
+        $this->due = $source->getDue()->getValue();
     }
 }

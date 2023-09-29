@@ -3,7 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Todo;
+use packages\Todolist\Todo\Domain\Todo\TodoRepositoryInterface;
+use packages\Todolist\Todo\Domain\Todo\TodoId;
+use packages\Todolist\Todo\Domain\Todo\TodoTitle;
+use packages\Todolist\Todo\Domain\Todo\TodoContent;
+use packages\Todolist\Todo\Domain\Todo\TodoDue;
+use packages\Todolist\Todo\Domain\Todo\Todo;
+use DB;
+use App\Http\Requests\TodoRequest;
 
 class TodoController extends Controller
 {
@@ -12,103 +19,99 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function __invoke()
+    public function __invoke(TodoRepositoryInterface $todoRepository)
     {
-        $todos = Todo::orderBy('created_at', 'desc')->get();
+        $todos = $todoRepository->all();
 
         return view('index')->with('todos', $todos);
+
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @param TodoRepositoryInterface $todoRepository
+     * @return void
      */
+    public function show($id, TodoRepositoryInterface $todoRepository)
+    {
+        $todoId = new TodoId($id);
+        $todos = $todoRepository->findById($todoId);
+    
+        return view('show')->with('todos', $todos);
+    }
+
     public function create()
     {
         return view('create');
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param TodoRequest $request
+     * @param TodoRepositoryInterface $todoRepository
+     * @return void
      */
-    public function store(Request $request)
+     public function store(TodoRequest $request,TodoRepositoryInterface $todoRepository)
     {
-        $this->validate($request,
-            [
-                'title' => 'required',
-                'content' => 'required',
-                'due' => 'required'
-            ]
-            
-        );
+        $maxId = DB::table('todos')->max('id'); 
+        $newId = $maxId + 1;
+        $createTodo = new Todo(
+           new TodoId($newId),
+           new TodoTitle($request->input('title')) ,
+           new TodoContent($request->input('content')),
+           new TodoDue($request->input('due')),
+            );
 
-        $todo = new Todo();
-        $todo->title = $request->input('title');
-        $todo->content = $request->input('content');
-        $todo->due = $request->input('due');
-        $todo->save();
+        $todoRepository->save($createTodo);
 
         return redirect('/')->with('success', 'Todo created successfuly!');
     }
 
     /**
-     * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @param TodoRepositoryInterface $todoRepository
+     * @return void
      */
-    public function show($id)
-    {
-        $todo = Todo::find($id);
-
-        return view('show')->with('todo', $todo);
-    }
+     public function edit($id, TodoRepositoryInterface $todoRepository)
+     {
+        $todoId = new TodoId($id);
+        $todos = $todoRepository->findById($todoId);
+    
+        return view('edit')->with('todos', $todos);
+     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $todo = Todo::find($id);
+    *
+    * @param TodoRequest $request
+    * @param TodoRepositoryInterface $todoRepository
+    * @param $id
+    * @return void
+    */
+     public function update(TodoRequest $request,TodoRepositoryInterface $todoRepository, $id)
+     {
+        $updateTodo = new Todo(
+            new TodoId($id),
+            new TodoTitle($request->input('title')) ,
+            new TodoContent($request->input('content')),
+            new TodoDue($request->input('due')),
+        );
 
-        return view('edit')->with('todo', $todo);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $todo = Todo::find($id);
-        $todo->title = $request->input('title');
-        $todo->content = $request->input('content');
-        $todo->due = $request->input('due');
-        $todo->save();
-
+        $todoRepository->update($updateTodo);
+    
         return redirect('/')->with('success', 'Todo edited successfuly!');
-    }
+     }
 
     /**
-     * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param TodoRepositoryInterface $todoRepository
+     * @param  $id
+     * @return void
      */
-    public function destroy($id)
+    public function destroy(TodoRepositoryInterface $todoRepository, $id)
     {
-        $todo = Todo::find($id);
-        $todo->delete();
+
+        $todoId = new TodoId($id);
+        $todoRepository->delete($todoId);
 
         return redirect('/')->with('success', 'Todo deleted successfuly!');
     }

@@ -2,9 +2,6 @@
 
 namespace packages\Todolist\Todo\Domain\Todo;
 
-use App\Domain\Todo\Aggregate\Todo;
-use App\Domain\Todo\ValueObject\Id;
-
 interface TodoRepository
 {
     public function create(Todo $todo): void;
@@ -16,7 +13,7 @@ interface TodoRepository
      */
     public function findById(Id $id): Todo;
 
-    public function delete(Todo $todo): void;
+    public function delete(Id $id): Todo;
 
     public function all(Todo $todo);
 
